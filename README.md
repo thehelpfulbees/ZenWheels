@@ -1,5 +1,9 @@
-Code for a Flask webserver intended to give users a live video feed of a remote control car and allow them to drive it with their keyboard.
+A Flask webserver that allows users to connect to ZenWheels RC cars via the server and drive them remotely. Based on the PC Controller by mihai-varga.
 
-Camera code is based on the works of Eric Chio:
-https://github.com/log0/video_streaming_with_flask_example
-I redid the site to add flask-socketio to allow data to be transmitted back. Due to the demanding nature of Eric's code I'm not sure the two things will ever work simultaneously.
+Requirements:
+PyQt4 4.8.6 and SIP 4.16.4
+Flask==0.12.1
+Flask-SocketIO==2.8.6
+PyBluez==0.22
+eventlet==0.21.0
+(and maybe some others)
