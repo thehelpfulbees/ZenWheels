@@ -1,34 +1,40 @@
 # main.py
 
-from camera2 import VideoCamera
+#imports for bluetooth
+from bluetooth_for_server import MainWindow
+import sys
+import thread
+from bluetooth import *
+import binascii
+from PyQt4.QtGui import QApplication, QMainWindow
+from PyQt4 import QtCore
+from ui_Car import Ui_MainWindow
+
+#imports for flask
 from flask import Flask, render_template, Response
 from flask_socketio import SocketIO, send, emit
 
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'butts'
 
-app.config['SECRET_KEY'] = 'Yoko Shimomura is a Japanese composer and pianist, primarily known for her work in video games.'
+#bluetooth_app = None
+#window = None
+bluetooth_app = QApplication(sys.argv)
+window = MainWindow()
+window.show()
+
 socketio = SocketIO(app)
+keys = [False]*200
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-def gen(camera):
-    while True:
-        frame = camera.get_frame()
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
-
-@app.route('/video_feed')
-def video_feed():
-    return Response(gen(VideoCamera()),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
-
 
 @socketio.on('connect')
 def on_connect():
-    emit('my response', {'data': 'Connected'})
+    emit('echo', {'data': 'Connected'})
     print("Server has connected to client")
     #print(data)
 
@@ -39,10 +45,32 @@ def on_disconnect():
 @socketio.on('message')
 def on_message(msg):
     print('Message received: ' + msg)
-    #send("Receieved " + msg['data'], broadcast=True)
-    
-    
+    emit('echo', {'data': "Server received message: "+str(msg)})
 
-if __name__ == '__main__':
+@socketio.on('carconnect')
+def on_carconnect(data):
+    emit('echo', {'data': "Now scanning for nearby cars"})
+    window.tryToConnect()
+    
+@socketio.on('keydown')
+def on_keydown(data):
+    keycode = data[u'id']
+    keys[keycode] = True;
+    emit('echo', {'data': "Keydown: "+str(keycode)})
+
+    window.keyPress(keycode)
+
+@socketio.on('keyup')
+def on_keyup(data):
+    keycode = data[u'id']
+    keys[keycode] = False;
+    emit('echo', {'data': "Keyup: "+str(keycode)})
+
+def main():
+    
     #app.run(host='0.0.0.0', debug=True)
-    socketio.run(app, host='0.0.0.0')
+    socketio.run(app, host='127.0.0.1')
+    #sys.exit(bluetooth_app.exec_())
+    
+if __name__ == '__main__':
+    main()

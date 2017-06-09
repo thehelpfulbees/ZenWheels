@@ -16,10 +16,17 @@
     
     <button id="refresh" onclick="window.location.reload(true);">reload</button>
     
-    <button id="boopbutton">BOOP</button>
-    
-     <h3> motionJPEG streamed from server to client </h3>
-      <!--<img  style="width:20%;" src="{{ url_for('video_feed') }}">-->
+    <button id="boopbutton">Test Server Connection</button>
+
+    <button id="carconnect">Connect to car</button>
+
+    <p> Please click the button above and then wait for connection to car (can take up to a minute, car will beep & light up when connected) </p>
+
+    <p> Controls: accelerate/decelerate with W and S (car will maintain speed), steer with A and D, brake with space, lights and horn with L and H </p>
+
+    <b>Message log with server:</b><br>
+
+    <div id="log"></div>
      
   </body>
 </html>
