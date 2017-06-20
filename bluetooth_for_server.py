@@ -7,7 +7,15 @@ from PyQt4.QtGui import QApplication, QMainWindow
 from PyQt4 import QtCore
 
 class MainWindow(QMainWindow):
+
+    """Object that can search for and connect to zenwheels cars.
+
+    Referred to as Window because it was originally designed to have a GUI on the server end but this was removed."""
+
+    
     def __init__(self):
+        """Initialise commands"""
+        
         QMainWindow.__init__(self)
         self.action_dict = {'horn' : 0, 'lights' : 0, 'fault' : 0,}
         self.acceleration = 0
@@ -33,15 +41,18 @@ class MainWindow(QMainWindow):
                          'H':72, 'L':76, 'CTRL':17, 'Q':81}
 
     def tryToConnect(self):
+        """Starts a thread and tries to connect"""
         thread.start_new_thread(self.connect,())
 
     def quit(self):
+        """Closes socket and exits"""
         try:
             self.sock.close()
         except: AttributeError
         sys.exit()
 
     def connect(self):
+        """Searches for cars to connect to"""
         addr = None
 
         print('Searching for bluetooth connections')
@@ -64,6 +75,7 @@ class MainWindow(QMainWindow):
         #self.ui.lineEdit.setText("Connection established.")
 
     def keyPress(self, key):
+        """Callback for all keypresses, issues commands to car"""
         if key == self.keycodes['H']:
             if self.action_dict['horn'] == 0:
                 self.action_dict['horn'] = 1
